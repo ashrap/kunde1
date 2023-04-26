@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oblig2</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="application/javascript">
+        function regKunde() {
+            let riktig=true;
+            let eAntall=$("#antall").val();
+let antall= Number($("#antall").val());
+            if (isNaN(antall)) {
+                alert("Du må skrive et gyldig tall i antall feltet");
+                riktig=false;
+            } else if (eAntall.length === 0) {
+                $("#feilAntall").html("Må skrive noe inn i antall");
+                document.getElementById('feilAntall').style.color='red';
+                riktig = false;
+            }
+
+let fornavn= $("#fornavn").val();
+            if (fornavn.length === 0 ) {
+                document.getElementById('feilFornavn').style.color='red';
+                $("#feilFornavn").html("Må skrive noe inn i fornavn");
+                riktig = false;
+            }
+let etternavn= $("#etternavn").val();
+            if (etternavn.length === 0 ) {
+                document.getElementById('feilEtternavn').style.color='red';
+                $("#feilEtternavn").html("Må skrive noe inn i etternavn");
+                riktig = false;
+            }
+let telefonnr= $("#telefonnr").val();
+            if (telefonnr.length === 0) {
+                document.getElementById('feilTelefonnr').style.color='red';
+                $("#feilTelefonnr").html("Må skrive noe inn i telefonnr");
+                riktig = false;
+            }
+let epost= $("#epost").val();
+            if (epost.length === 0 ) {
+                document.getElementById('feilEpost').style.color='red';
+                $("#feilEpost").html("Må skrive noe inn i epost");
+                riktig = false;
+            }
+            let film = (document.getElementById("film").value);
+            if(film.length === 0) {document.getElementById('feilFilm').innerHTML = "Må velge en film";
+                document.getElementById('feilFilm').style.color='red';
+                riktig = false;
+            }
+
+
+
+if (riktig) {
+            const kunde = {
+                antall: antall,
+                fornavn: fornavn,
+                etternavn: etternavn,
+                telefonnr: telefonnr,
+                epost: epost,
+                film: film
+            }
+            $.post("/lagre", kunde, function () {
+                hentAlle();
+            })
+            $("#antall").val("");
+            $("#fornavn").val("");
+            $("#etternavn").val("");
+            $("#telefonnr").val("");
+            $("#epost").val("");
+            $("#film").val("");
+        }}
+
+        function hentAlle() {
+            $.get("/hentAlle", function (kunder) {
+                formaterData(kunder);
+            });
+        }
+        function formaterData(kunder) {
+            let ut = "<table class='table table-striped'><tr><th>Film</th> <th>Antall</th> <th>Fornavn</th> <th>Etternavn</th> <th>Telefonnr</th> <th>Epost</th> <th></th></tr>";
+            for (const kunde of kunder) {
+                ut+="<tr><td>"+kunde.film+ "</td><td>"+kunde.antall+"</td><td>"+ kunde.fornavn + "</td><td>"+ kunde.etternavn + "</td><td>"+ kunde.telefonnr +
+                    "</td><td>"+ kunde.epost +"</td>"+
+                    "</tr>";
+            }
+            $("#billetter").html(ut);
+        }
+
+
+        function slett() { $.get("/slett",function() {
+            hentAlle();
+        })
+
+        }
+    </script>
+</head>
+<body>
+<h1>Bestilling av kinobilletter</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+    <form class="form">
+Velg film: <select id="film">
+    <option>The Last Manhunt</option>
+    <option>House Party</option>
+    <option>Poker Face</option>
+    <option>Bullet Train</option>
+    <option>Lou</option>
+    <option>Athena</option>
+    <option>Ambulance</option>
+    <option>Pinocchio</option>
+    <option>Bisping</option>
+    <option>Hustle</option>
+    <option>Good Night Oppy</option>
+    <option>Polar Bear</option>
+    <option>Interceptor</option> </select>
+<div id="feilFilm"></div><br>
+        <div class="form-group">
+        <label for="antall">Antall</label>
+ <input type="text" id="antall" class="form-control"><br> <div id="feilAntall"></div>
+        </div>
+        <div class="form-group">
+        <label for="fornavn">Fornavn</label>
+     <input type="text" id="fornavn" class="form-control"><br><div id="feilFornavn"></div>
+        </div>
+            <div class="form-group">
+        <label for="etternavn">Etternavn</label>
+     <input type="text" id="etternavn" class="form-control"><br><div id="feilEtternavn"></div>
+            </div>
+                <div class="form-group">
+        <label for="telefonnr">Telefonnr</label>
+     <input type="text" id="telefonnr" class="form-control"><br> <div id="feilTelefonnr"></div>
+                </div>
+                    <div class="form-group">
+        <label for="epost">Epost</label>
+     <input type="text" id="epost" class="form-control"><br> <div id="feilEpost"></div>
+                    </div>
+    </form>
+    <button class="btn btn-primary" onclick="regKunde()">Kjøp billett</button>
+        </div>
+        <div class="col-md-8">
+    <h3>Alle billetter</h3>
+    <div id="billetter" class="table-responsive"></div>
+    <button class="btn btn-danger" onclick="slett()">Slett billettene</button>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

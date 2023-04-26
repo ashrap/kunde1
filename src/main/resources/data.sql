@@ -1,0 +1,1 @@
+INSERT INTO Kunde (fornavn,etternavn,telefonnr,epost,antall,film) VALUES ('Ashraf','uhuihiu','19023098','aspd',1,'asd');
